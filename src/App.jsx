@@ -1,8 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { BarChart3, Filter, Search, UserCheck, Users, UserX } from "lucide-react";
 
-const groups = [
+const rawGroups = [
   {
     name: "A1",
     displayName: "NEY-A1",
@@ -12,8 +11,8 @@ const groups = [
   {
     name: "A2",
     displayName: "NEY-A2",
-    signedUp: ["Phoebe Soh", "Gideon Chia", "Megan Lim", "Deborah Soh", "Kerin Liau", "Sophie Goh", "Erica", "Ariel"],
-    notSignedUp: ["Ng Zo Ee", "Aidan Koh", "Samuel Choo", "Cheryl Ker", "Liz", "Aerin", "Zan", "Raine", "Jenny", "Sze Wing", "Hannah", "Chloe", "Aceson", "Nathaniel"],
+    signedUp: ["Phoebe Soh", "Gideon Chia", "Megan Lim", "Deborah Soh", "Kerin Liau", "Sophie Goh", "Cheryl Ker", "Erica", "Ariel", "Zan Lim", "Raine Lim"],
+    notSignedUp: ["Ng Zo Ee", "Aidan Koh", "Samuel Choo", "Liz", "Aerin", "Jenny", "Sze Wing", "Hannah", "Chloe", "Aceson", "Nathaniel"],
   },
   {
     name: "A3",
@@ -30,8 +29,8 @@ const groups = [
   {
     name: "A5",
     displayName: "NEY-A5",
-    signedUp: ["Joshlyn", "Stacie", "Jeroi", "Ethan Tey", "Leyanne Poy", "Trisha", "Olivia Ng", "Phoebe See", "Azryel Liew", "David Yap Jing Cheng", "Jyan Chen", "Joses Yeoh", "Claudia", "Irayna Yao"],
-    notSignedUp: ["David Tan", "Kazelyn"],
+    signedUp: ["Joshlyn", "Stacie", "Jeroi", "Ethan Tey", "Leyanne Poy", "Trisha", "Olivia Ng", "David Tan", "Phoebe See", "Azryel Liew", "David Yap Jing Cheng", "Jyan Chen", "Joses Yeoh", "Claudia", "Irayna Yao"],
+    notSignedUp: ["Kazelyn"],
   },
   {
     name: "A6",
@@ -42,8 +41,8 @@ const groups = [
   {
     name: "B1",
     displayName: "NEY-B1",
-    signedUp: ["Emily", "Melissa", "cheesiong", "Adalric", "Ethan Thiang", "Shao Zhe", "Matthew", "christine", "Lleon", "Samuel", "Jiahwee", "Brenda"],
-    notSignedUp: ["carsen", "Calyn", "Felicia"],
+    signedUp: ["Emily", "Melissa", "cheesiong", "Carsen", "Adalric", "Ethan Thiang", "Shao Zhe", "Matthew", "christine", "Lleon", "Samuel", "Jiahwee", "Brenda"],
+    notSignedUp: ["Calyn", "Felicia"],
   },
   {
     name: "B2",
@@ -54,8 +53,8 @@ const groups = [
   {
     name: "B3",
     displayName: "NEY-B3",
-    signedUp: ["Kayden", "Hock Long", "Xavier", "peter", "michael", "Peiqi", "En Ming", "Jia Yu"],
-    notSignedUp: ["jia hui", "davien", "Jayden"],
+    signedUp: ["Kayden", "Hock Long", "Jia Hui", "Xavier", "peter", "michael", "Peiqi", "En Ming", "Jia Yu"],
+    notSignedUp: ["davien", "Jayden"],
   },
   {
     name: "C1",
@@ -66,8 +65,8 @@ const groups = [
   {
     name: "C2",
     displayName: "NEY-C2",
-    signedUp: ["Tristan", "Vincent", "Elton", "Keith", "Gavril"],
-    notSignedUp: ["Jonathan"],
+    signedUp: ["Tristan", "Vincent", "Elton", "Keith", "Gavril", "Jonathan Ler"],
+    notSignedUp: [],
   },
   {
     name: "C3",
@@ -81,7 +80,9 @@ const groups = [
     signedUp: ["Tan Wei Xuan", "Ryan Lim", "Keefe Lau"],
     notSignedUp: [],
   },
-].map((group) => {
+];
+
+const groups = rawGroups.map((group) => {
   const total = group.signedUp.length + group.notSignedUp.length;
   return {
     ...group,
@@ -91,16 +92,73 @@ const groups = [
   };
 });
 
-const ticketFollowUps = {
-  "Jessie Loo": "North Youth to Northeast Youth",
-  Oliver: "North Youth to Northeast Youth",
-  "Dave Chow": "Northeast Adults to Northeast Youth",
-};
-
 const clusters = ["All", "A", "B", "C", "ULs"];
-const VERIFIED_SIGNUPS = groups.reduce((sum, group) => sum + group.signedUp.length, 0);
-const TOTAL_MEMBERS = groups.reduce((sum, group) => sum + group.total, 0);
-const OVERALL_RATE = Math.round((VERIFIED_SIGNUPS / TOTAL_MEMBERS) * 100);
+const verifiedSignups = groups.reduce((sum, group) => sum + group.signedUp.length, 0);
+const totalMembers = groups.reduce((sum, group) => sum + group.total, 0);
+const overallRate = Math.round((verifiedSignups / totalMembers) * 100);
+const ticketFollowUps = {};
+
+function SvgIcon({ name, className = "h-5 w-5" }) {
+  const props = {
+    className,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 2,
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    "aria-hidden": true,
+  };
+
+  const icons = {
+    chart: (
+      <>
+        <path d="M3 3v18h18" />
+        <rect x="7" y="12" width="3" height="5" rx="1" />
+        <rect x="12" y="8" width="3" height="9" rx="1" />
+        <rect x="17" y="5" width="3" height="12" rx="1" />
+      </>
+    ),
+    search: (
+      <>
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" />
+      </>
+    ),
+    filter: (
+      <>
+        <path d="M4 6h16" />
+        <path d="M7 12h10" />
+        <path d="M10 18h4" />
+      </>
+    ),
+    users: (
+      <>
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      </>
+    ),
+    check: (
+      <>
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="m16 11 2 2 4-4" />
+      </>
+    ),
+    x: (
+      <>
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <path d="m17 8 5 5" />
+        <path d="m22 8-5 5" />
+      </>
+    ),
+  };
+
+  return <svg {...props}>{icons[name] || icons.chart}</svg>;
+}
 
 function getStatus(rate) {
   if (rate === 100) return { label: "Complete", className: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200" };
@@ -109,7 +167,7 @@ function getStatus(rate) {
   return { label: "Needs push", className: "border-rose-400/30 bg-rose-400/10 text-rose-200" };
 }
 
-function StatCard({ title, value, subtitle, icon: Icon, accent = "blue" }) {
+function StatCard({ title, value, subtitle, icon = "chart", accent = "blue" }) {
   const accentClasses = {
     blue: "from-blue-500/20 to-cyan-400/5",
     green: "from-emerald-500/20 to-lime-400/5",
@@ -127,27 +185,20 @@ function StatCard({ title, value, subtitle, icon: Icon, accent = "blue" }) {
           <p className="mt-1 text-sm text-slate-400">{subtitle}</p>
         </div>
         <div className="rounded-2xl border border-white/10 bg-white/10 p-3 text-white">
-          <Icon className="h-5 w-5" />
+          <SvgIcon name={icon} />
         </div>
       </div>
     </div>
   );
 }
 
-function Pill({ children, variant = "signed", note }) {
+function Pill({ children, variant = "signed" }) {
   const cls =
-    variant === "ticket"
-      ? "border-amber-300/20 bg-amber-400/10 text-amber-100"
-      : variant === "missing"
+    variant === "missing"
       ? "border-rose-300/20 bg-rose-400/10 text-rose-100"
       : "border-emerald-300/20 bg-emerald-400/10 text-emerald-100";
 
-  return (
-    <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm ${cls}`} title={note || undefined}>
-      <span>{children}</span>
-      {note ? <span className="rounded-full bg-white/10 px-2 py-0.5 text-[11px] text-current/90">ticket change</span> : null}
-    </span>
-  );
+  return <span className={`inline-flex items-center gap-2 rounded-full border px-3 py-1 text-sm ${cls}`}>{children}</span>;
 }
 
 export default function Dashboard() {
@@ -191,37 +242,37 @@ export default function Dashboard() {
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/10 px-3 py-1 text-sm text-slate-200 shadow-sm backdrop-blur">
-                <BarChart3 className="h-4 w-4 text-blue-200" />
+                <SvgIcon name="chart" className="h-4 w-4 text-blue-200" />
                 NE Youth Conference Tracker
               </div>
               <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-white md:text-6xl">
                 Dashboard: Lifegroup Sign Ups
               </h1>
               <div className="mt-5 inline-flex items-center gap-3 rounded-2xl border border-cyan-300/30 bg-cyan-400/15 px-5 py-3 text-base font-semibold text-cyan-50 shadow-2xl shadow-cyan-950/30 backdrop-blur">
-                <BarChart3 className="h-5 w-5 text-cyan-200" />
+                <SvgIcon name="chart" className="h-5 w-5 text-cyan-200" />
                 <span>Data accurate as of 15 May, 2:48 AM</span>
               </div>
             </div>
             <div className="rounded-3xl border border-white/10 bg-white/10 px-5 py-4 shadow-2xl shadow-black/20 backdrop-blur">
               <p className="text-sm text-slate-300">Verified conference signups</p>
-              <p className="mt-1 text-4xl font-semibold text-white">{VERIFIED_SIGNUPS}</p>
-              <p className="mt-1 text-sm text-slate-400">{OVERALL_RATE}% overall completion</p>
+              <p className="mt-1 text-4xl font-semibold text-white">{verifiedSignups}</p>
+              <p className="mt-1 text-sm text-slate-400">{overallRate}% overall completion</p>
             </div>
           </div>
         </motion.div>
 
         <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <StatCard title="Members shown" value={totals.members} subtitle="Across filtered lifegroups" icon={Users} accent="blue" />
-          <StatCard title="Signed up" value={totals.signed} subtitle="Verified registrations" icon={UserCheck} accent="green" />
-          <StatCard title="Not signed up" value={totals.missing} subtitle="Members needing follow-up" icon={UserX} accent="rose" />
-          <StatCard title="Signup rate" value={`${totals.rate}%`} subtitle="Filtered completion rate" icon={BarChart3} accent="violet" />
+          <StatCard title="Members shown" value={totals.members} subtitle="Across filtered lifegroups" icon="users" accent="blue" />
+          <StatCard title="Signed up" value={totals.signed} subtitle="Verified registrations" icon="check" accent="green" />
+          <StatCard title="Not signed up" value={totals.missing} subtitle="Members needing follow-up" icon="x" accent="rose" />
+          <StatCard title="Signup rate" value={`${totals.rate}%`} subtitle="Filtered completion rate" icon="chart" accent="violet" />
         </div>
 
         <div className="mb-6 rounded-3xl border border-white/10 bg-white/[0.06] p-4 shadow-2xl shadow-black/20 backdrop-blur md:p-5">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex flex-1 flex-col gap-4 md:flex-row md:items-center">
               <div className="relative w-full md:max-w-sm">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <SvgIcon name="search" className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
                   value={query}
                   onChange={(event) => setQuery(event.target.value)}
@@ -245,7 +296,7 @@ export default function Dashboard() {
               onClick={() => setFollowUpOnly((value) => !value)}
               className={`inline-flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm transition ${followUpOnly ? "border-blue-400/50 bg-blue-500 text-white" : "border-white/10 bg-slate-950/40 text-slate-300 hover:bg-white/10 hover:text-white"}`}
             >
-              <Filter className="h-4 w-4" />
+              <SvgIcon name="filter" className="h-4 w-4" />
               {followUpOnly ? "Showing follow-up groups" : "Show only follow-up groups"}
             </button>
           </div>
@@ -266,7 +317,6 @@ export default function Dashboard() {
         <div className="grid gap-5 xl:grid-cols-2">
           {filtered.map((group, index) => {
             const status = getStatus(group.rate);
-            const ticketNames = group.signedUp.filter((name) => ticketFollowUps[name]);
             return (
               <motion.div
                 key={group.name}
@@ -293,14 +343,14 @@ export default function Dashboard() {
                   <div className="mt-5 grid grid-cols-2 gap-3">
                     <div className="rounded-3xl border border-emerald-300/10 bg-emerald-400/10 p-4">
                       <div className="flex items-center gap-2 text-sm text-emerald-200">
-                        <UserCheck className="h-4 w-4" />
+                        <SvgIcon name="check" className="h-4 w-4" />
                         Signed up
                       </div>
                       <p className="mt-2 text-2xl font-semibold text-emerald-50">{group.signedUp.length}</p>
                     </div>
                     <div className="rounded-3xl border border-rose-300/10 bg-rose-400/10 p-4">
                       <div className="flex items-center gap-2 text-sm text-rose-200">
-                        <UserX className="h-4 w-4" />
+                        <SvgIcon name="x" className="h-4 w-4" />
                         Not signed up
                       </div>
                       <p className="mt-2 text-2xl font-semibold text-rose-50">{group.notSignedUp.length}</p>
@@ -310,31 +360,17 @@ export default function Dashboard() {
                   <div className="mt-5">
                     <h3 className="mb-3 text-sm font-medium uppercase tracking-wide text-slate-400">Signed up members</h3>
                     <div className="flex flex-wrap gap-2">
-                      {group.signedUp.length ? group.signedUp.map((name) => {
-                        const note = ticketFollowUps[name];
-                        return (
-                          <Pill key={`${group.name}-yes-${name}`} variant={note ? "ticket" : "signed"} note={note}>
-                            {name}
-                          </Pill>
-                        );
-                      }) : <p className="text-sm text-slate-400">No signups recorded yet.</p>}
+                      {group.signedUp.length ? group.signedUp.map((name) => (
+                        <Pill key={`${group.name}-yes-${name}`}>{name}</Pill>
+                      )) : <p className="text-sm text-slate-400">No signups recorded yet.</p>}
                     </div>
-
-                    {ticketNames.length ? (
-                      <div className="mt-3 rounded-2xl border border-amber-300/15 bg-amber-400/5 px-3 py-2 text-xs text-amber-100/90">
-                        <span className="font-medium text-amber-100">Signed up, ticket change needed:</span>{" "}
-                        {ticketNames.map((name) => `${name}: ${ticketFollowUps[name]}`).join(" · ")}
-                      </div>
-                    ) : null}
                   </div>
 
                   <div className="mt-5">
                     <h3 className="mb-3 text-sm font-medium uppercase tracking-wide text-slate-400">Needs follow-up</h3>
                     <div className="flex flex-wrap gap-2">
                       {group.notSignedUp.length ? group.notSignedUp.map((name) => (
-                        <Pill key={`${group.name}-no-${name}`} variant="missing">
-                          {name}
-                        </Pill>
+                        <Pill key={`${group.name}-no-${name}`} variant="missing">{name}</Pill>
                       )) : <p className="text-sm text-slate-400">Everyone in this lifegroup has signed up.</p>}
                     </div>
                   </div>

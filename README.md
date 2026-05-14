@@ -8,9 +8,13 @@ Data accurate as of 15 May, 2:48 AM.
 
 ## Latest signup updates included
 
-- Jenna Lim added to NEY-A1
-- Luk Au added to NEY-A4
-- Nicolette moved to signed up in NEY-C1
+- Cheryl Ker added to signed up in NEY-A2
+- Zan Lim and Raine Lim added to signed up in NEY-A2
+- David Tan added to signed up in NEY-A5
+- Carsen added to signed up in NEY-B1
+- Jia Hui added to signed up in NEY-B3
+- Jonathan Ler added to signed up in NEY-C2
+- Ticket-change labels removed
 
 ## Deploy to Vercel
 
